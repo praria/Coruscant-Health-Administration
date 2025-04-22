@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+env/
+
+# macOS
+.DS_Store
+
+# SQLite
+*.sqlite3
+*.db
+
+# Django specific
+*.log
+db.sqlite3
+media/
+staticfiles/
+static_root/
+local_settings.py
+
+# VSCode / IDEs
+.vscode/
+.idea/
+
+# Tailwind CSS build artifacts (if you're compiling locally)
+node_modules/
+public/
+*.css.map
+
+# Coverage and testing
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+
+# Migrations (optional if you want to exclude them during early dev)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+# Uncomment below if you want to ignore all migration files:
+# **/migrations/*.py
+
+# Git files
+*.orig
+
+# SASS/SCSS cache
+.sass-cache/
+
+# Custom settings
+secrets.json

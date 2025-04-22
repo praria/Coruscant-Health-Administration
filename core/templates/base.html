@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Coruscant Medical System{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Tailwind CDN (for development use only) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-700 text-white p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold"> Coruscant Medical System</div>
+            <div class="space-x-4">
+                {% if user.is_authenticated %}
+                    <span>Welcome, {{ user.username }}!</span>
+
+                    {% if user.role == "PATIENT" %}
+                        <a href="#" class="hover:underline">My Health</a>
+                        <a href="#" class="hover:underline">Prescriptions</a>
+                        <a href="{% url 'dashboard_patient' %}" class="hover:underline">My Dashboard</a>
+                        
+                    {% elif user.role == "DOCTOR" %}
+                        <a href="#" class="hover:underline">Patients</a>
+                        <a href="#" class="hover:underline">Orders</a>
+                        <a href="{% url 'dashboard_doctor' %}" class="hover:underline">Doctor Dashboard</a>
+
+                    {% elif user.role == "EMERGENCY" %}
+                        <a href="#" class="hover:underline">Quick Intake</a>
+                        <a href="{% url 'dashboard_emergency' %}" class="hover:underline">Emergency Dashboard</a>
+
+                    {% elif user.role == "ADMIN" %}
+                        <a href="{% url 'home_admin' %}" class="hover:underline">Home</a>
+                        <a href="{% url 'dashboard_admin' %}" class="hover:underline">Admin Dashboard</a>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="hover:underline bg-transparent text-white border-none p-0 m-0 cursor-pointer">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hover:underline">Login</a>
+                    <a href="{% url 'register_patient' %}" class="hover:underline">Register (Patient)</a>
+                    <a href="{% url 'register_doctor' %}" class="hover:underline">Register (Doctor)</a>
+                    <a href="{% url 'register_emergency' %}" class="hover:underline">Register (Emergency)</a>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page content -->
+    <main class="max-w-4xl mx-auto mt-6 p-4 bg-white rounded shadow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

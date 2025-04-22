@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Doctor Dashboard{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Doctor Dashboard</h2>
+<p>Welcome, Dr. {{ user.username }}!</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+    <div class="p-4 bg-yellow-100 rounded shadow">
+        <h3 class="font-semibold text-lg mb-2">Today’s Appointments</h3>
+        <ul class="bg-white shadow rounded p-4 space-y-2">
+            {% for patient in patients %}
+            <li class="border-b py-2">
+                <strong>{{ patient.name }}</strong> - {{ patient.condition }} (Last visit: {{ patient.last_visit }})
+            </li>
+            {% empty %}
+            <li>No patients assigned.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="p-4 bg-purple-100 rounded shadow">
+        <h3 class="font-semibold text-lg mb-2">Patient Records</h3>
+        <p>Manage your patient records.</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Emergency Services Dashboard{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Emergency Department</h2>
+<p>Welcome, {{ user.username }}!</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+    <div class="p-4 bg-red-100 rounded shadow">
+        <h3 class="font-semibold text-lg mb-2">Quick Intake</h3>
+        <ul class="bg-white shadow rounded p-4 space-y-2">
+            {% for log in logs %}
+            <li class="border-b py-2">
+                <strong>{{ log.date }}</strong> - {{ log.incident }} handled by {{ log.handled_by }}
+            </li>
+            {% empty %}
+            <li>No recent emergency incidents.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="p-4 bg-orange-100 rounded shadow">
+        <h3 class="font-semibold text-lg mb-2">Emergency Protocols</h3>
+        <p>Access emergency guidelines and contacts.</p>
+    </div>
+</div>
+{% endblock %}

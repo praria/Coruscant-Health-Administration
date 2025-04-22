@@ -63,7 +63,12 @@ Stage 3: User Authentication and registration
 1. update urls.py in project "coruscant_health_administration"
 2. create templates directory inside core app -- mkdir -p core/templates/auth
 3. create base.html file for layout reusability -- touch core/templates/base.html
-4. create the login page -- touch core/templates/auth/login.html
+4. create the login page -- touch core/templates/auth/login.html 
+5. create a superuser -- python3 manage.py createsuperuser (username/ password: superuser/ superuser0310)
+6. admin username/password: admin1/ administration1
+6. patience's username/ password: user2/ patience2, user3/ patience3
+7. doctor's username/ password: doctor2/ medical2, doctor3/ medical3
+8. emergency's username/password: emergency1/department1, emmergency2/ department2
 
 
 
