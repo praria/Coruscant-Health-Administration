@@ -23,5 +23,11 @@ urlpatterns = [
     path('dashboard/doctor/', views.dashboard_doctor, name='dashboard_doctor'),
     path('dashboard/emmergency/', views.dashboard_emergency, name='dashboard_emergency'),
     path('dashboard/admin/', views.dashboard_admin, name='dashboard_admin'),
+    
+    path('health/submit/', views.submit_health_reading, name='submit_health_reading'),
+    path('dashboard/doctor/readings/', views.view_health_readings, name='view_health_readings'),
+    path('dashboard/doctor/prescribe/', views.write_prescription, name='write_prescription'),
+    path('appointments/schedule/', views.schedule_appointment, name='schedule_appointment'),
+
 
 ]

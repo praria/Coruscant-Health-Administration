@@ -5,21 +5,45 @@
 <p>Welcome, {{ user.username }}!</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
    <div class="p-4 bg-blue-100 rounded shadow">
-       <h3 class="font-semibold text-lg mb-2">Upcoming Appointments</h3>
+       <h3 class="font-semibold text-lg mb-2">Your Appointments:</h3>
        <ul class="mb-4">
-           {% for appt in appointments %}
-               <li>{{ appt.date }} at {{ appt.time }} with {{ appt.doctor }} - {{ appt.status }}</li>
-           {% endfor %}
+            {% for appointment in appointments %}
+                <li class="bg-gray-100 p-4 rounded shadow-sm">
+                    <p class="font-semibold">Doctor: {{ appointment.doctor.get_full_name|default:appointment.doctor.username }}</p>
+                    <p><strong>Scheduled:</strong> {{ appointment.scheduled_time|date:"M d, Y H:i" }}</p>
+                    <p><strong>Notes:</strong> {{ appointment.notes }}</p>
+                </li>
+            {% empty %}
+                <li>No appointments found.</li>
+            {% endfor %}
        </ul>
    </div>
+   
+
    <div class="p-4 bg-green-100 rounded shadow">
-       <h3 class="font-semibold text-lg mb-2">Prescriptions</h3>
-       <ul>
-           {% for p in prescriptions %}
-               <li>{{ p.medication }} ({{ p.dosage }}) - {{ p.frequency }}</li>
-           {% endfor %}
-       </ul>
+       <h3 class="font-semibold text-lg mb-2">Prescriptions:</h3>
+       <ul class="space-y-2">
+        {% for prescription in prescriptions %}
+            <li class="bg-gray-100 p-4 rounded shadow-sm">
+                <p class="font-semibold">Doctor: {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}</p>
+                <p><strong>Date:</strong> {{ prescription.created_at|date:"M d, Y H:i" }}</p>
+                <p><strong>Details:</strong> {{ prescription.instructions}}</p>
+            </li>
+        {% empty %}
+            <li>No prescriptions yet.</li>
+        {% endfor %}
+    </ul>
    </div>
+</div>
+<div class="mt-6">
+    <a href="{% url 'submit_health_reading' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Submit Health Data
+    </a>
+</div>
+<div class="mt-6">
+    <a href="{% url 'schedule_appointment' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Schedule an Appointment
+    </a>
 </div>
 {% endblock %}
 

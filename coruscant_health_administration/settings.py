@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',  # Custom app for user roles and permissions
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

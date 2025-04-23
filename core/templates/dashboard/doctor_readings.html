@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Health Readings{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Patient Health Readings</h1>
+
+<div class="space-y-4">
+    {% for reading in readings %}
+    <div class="bg-white shadow p-4 rounded-lg">
+        <p><strong>Patient:</strong> {{ reading.patient.username }}</p>
+        <p><strong>Timestamp:</strong> {{ reading.timestamp }}</p>
+        <p><strong>Heart Rate:</strong> {{ reading.heart_rate }} bpm</p>
+        <p><strong>Blood Pressure:</strong> {{ reading.blood_pressure }}</p>
+        <p><strong>Temperature:</strong> {{ reading.temperature }} °C</p>
+        {% if reading.notes %}
+        <p><strong>Notes:</strong> {{ reading.notes }}</p>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>No readings available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

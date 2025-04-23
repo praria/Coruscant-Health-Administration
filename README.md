@@ -70,5 +70,9 @@ Stage 3: User Authentication and registration
 7. doctor's username/ password: doctor2/ medical2, doctor3/ medical3
 8. emergency's username/password: emergency1/department1, emmergency2/ department2
 
+stage 4: 
+pip install django-widget-tweaks
+
+
 
 

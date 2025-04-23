@@ -1,6 +1,7 @@
 from django import forms
+from django.forms.widgets import DateTimeInput
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, PatientProfile, DoctorProfile
+from .models import Appointment, HealthReading, Prescription, User, PatientProfile, DoctorProfile
 from django.contrib.auth.forms import AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
@@ -73,3 +74,38 @@ class EmergencyRegistrationForm(BaseUserRegistrationForm):
         if commit:
             user.save()
         return user
+    
+class HealthReadingForm(forms.ModelForm):
+    class Meta:
+        model = HealthReading
+        fields = ['heart_rate', 'blood_pressure', 'temperature', 'notes']
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+
+
+class PrescriptionForm(forms.ModelForm):
+    patient = forms.ModelChoiceField(
+        queryset=User.objects.filter(role='PATIENT'),
+        label="Select Patient"
+    )
+
+    class Meta:
+        model = Prescription
+        fields = ['patient', 'instructions']
+        widgets = {
+            'instructions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Enter prescription details...'}),
+        }
+        
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['doctor', 'scheduled_time', 'notes']
+        widgets = {
+            'scheduled_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter only users with the DOCTOR role
+        self.fields['doctor'].queryset = User.objects.filter(role='DOCTOR')

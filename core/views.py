@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, get_user_model
-from .forms import CustomLoginForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from core.models import Appointment, HealthReading, Prescription
+from .forms import AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
 
@@ -48,9 +50,12 @@ def home_redirect_view(request):
         return redirect('login')  # fallback
     
 @login_required
+@user_passes_test(lambda u: u.role == 'PATIENT')
 def dashboard_patient(request):
-    appointments = get_sample_appointments()
-    prescriptions = get_sample_prescriptions()
+    # appointments = get_sample_appointments()
+    # prescriptions = get_sample_prescriptions()
+    prescriptions = Prescription.objects.filter(patient=request.user).order_by('-created_at')
+    appointments = Appointment.objects.filter(patient=request.user).order_by('-scheduled_time')
     return render(request, 'dashboard/patient.html', {
         'appointments': appointments,
         'prescriptions': prescriptions
@@ -58,9 +63,12 @@ def dashboard_patient(request):
 
 @login_required
 def dashboard_doctor(request):
-    patients = get_sample_patients()
+    #patients = get_sample_patients()
+    appointments = Appointment.objects.filter(doctor=request.user).order_by('-scheduled_time')
+    prescriptions = Prescription.objects.filter(doctor=request.user).order_by('-created_at')
     return render(request, 'dashboard/doctor.html', {
-        'patients': patients
+        'appointments': appointments,
+        'prescriptions': prescriptions,
     })
 
 @login_required
@@ -144,3 +152,64 @@ class CustomLoginView(LoginView):
             return reverse('home_admin')
 
         return reverse('home')  # fallback route
+    
+
+@login_required
+def submit_health_reading(request):
+    if request.user.role != 'PATIENT':
+        return redirect('home')  # restrict access to patients only
+
+    if request.method == 'POST':
+        form = HealthReadingForm(request.POST)
+        if form.is_valid():
+            reading = form.save(commit=False)
+            reading.patient = request.user
+            reading.save()
+            return redirect('dashboard_patient')
+    else:
+        form = HealthReadingForm()
+
+    return render(request, 'pages/submit_health_reading.html', {'form': form})
+
+
+def is_doctor(user):
+    return user.is_authenticated and user.role == 'DOCTOR'
+
+@login_required
+@user_passes_test(is_doctor)
+def view_health_readings(request):
+    readings = HealthReading.objects.select_related('patient').order_by('-timestamp')
+    return render(request, 'dashboard/doctor_readings.html', {'readings': readings})
+
+
+@login_required
+@user_passes_test(lambda u: u.role == 'DOCTOR')
+def write_prescription(request):
+    if request.method == 'POST':
+        form = PrescriptionForm(request.POST)
+        if form.is_valid():
+            prescription = form.save(commit=False)
+            prescription.doctor = request.user
+            prescription.save()
+            messages.success(request, 'Prescription submitted successfully.')
+            return redirect('dashboard_doctor')
+    else:
+        form = PrescriptionForm()
+
+    return render(request, 'dashboard/write_prescription.html', {'form': form})
+
+
+@login_required
+@user_passes_test(lambda u: u.role == 'PATIENT')
+def schedule_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = request.user  # Ensure patient is logged-in user
+            appointment.save()
+            return redirect('home_patient') 
+    else:
+        form = AppointmentForm()
+
+    return render(request, 'pages/schedule.html', {'form': form})

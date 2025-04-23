@@ -5,20 +5,31 @@
 <p>Welcome, Dr. {{ user.username }}!</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
     <div class="p-4 bg-yellow-100 rounded shadow">
-        <h3 class="font-semibold text-lg mb-2">Today’s Appointments</h3>
+        <h3 class="font-semibold text-lg mb-2">Your Appointments</h3>
         <ul class="bg-white shadow rounded p-4 space-y-2">
-            {% for patient in patients %}
-            <li class="border-b py-2">
-                <strong>{{ patient.name }}</strong> - {{ patient.condition }} (Last visit: {{ patient.last_visit }})
-            </li>
+            {% for appointment in appointments %}
+                <li class="bg-gray-100 p-4 rounded shadow-sm">
+                    <p class="font-semibold">Patient: {{ appointment.patient.get_full_name|default:appointment.patient.username }}</p>
+                    <p><strong>Time:</strong> {{ appointment.scheduled_time }}</p>
+                    <p><strong>Notes:</strong> {{ appointment.notes }}</p>
+                </li>
             {% empty %}
-            <li>No patients assigned.</li>
+                <li>No appointments found.</li>
             {% endfor %}
+
         </ul>
     </div>
     <div class="p-4 bg-purple-100 rounded shadow">
-        <h3 class="font-semibold text-lg mb-2">Patient Records</h3>
+        <h3 class="font-semibold text-lg mb-2">Patient List</h3>
         <p>Manage your patient records.</p>
     </div>
 </div>
+<a href="{% url 'view_health_readings' %}" class="block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+    View Patient Readings
+</a>
+<a href="{% url 'write_prescription' %}" class="block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4">
+    Write a Prescription
+</a>
+
+
 {% endblock %}

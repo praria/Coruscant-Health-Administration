@@ -30,9 +30,9 @@ class DoctorProfile(models.Model):
         return f"Doctor: {self.user.username}"
 
 class HealthReading(models.Model):
-    patient = models.ForeignKey('User', on_delete=models.CASCADE, limit_choices_to={'role': 'patient'})
+    patient = models.ForeignKey('User', on_delete=models.CASCADE, limit_choices_to={'role': 'PATIENT'})
     timestamp = models.DateTimeField(auto_now_add=True)
-    heart_rate = models.IntegerField()
+    heart_rate = models.PositiveIntegerField()
     blood_pressure = models.CharField(max_length=20)
     temperature = models.FloatField()
     notes = models.TextField(blank=True)
@@ -54,10 +54,21 @@ class Prescription(models.Model):
         related_name='prescriptions_received'
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    content = models.TextField()
+    instructions = models.TextField()
     
     def __str__(self):
         return f"Prescription for {self.patient.username} by {self.doctor.username}"
+    
+
+class Appointment(models.Model):
+    patient = models.ForeignKey('User', on_delete=models.CASCADE, limit_choices_to={'role': 'PATIENT'}, related_name='appointments_as_patient')
+    doctor = models.ForeignKey('User', on_delete=models.CASCADE, limit_choices_to={'role': 'DOCTOR'}, related_name='appointments_as_doctor')
+    scheduled_time = models.DateTimeField()
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Appointment for {self.patient.username} with {self.doctor.username} on {self.scheduled_time}"
+
 
 class ServiceOrder(models.Model):
     ORDER_CHOICES = [
