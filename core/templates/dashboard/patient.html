@@ -45,6 +45,19 @@
         Schedule an Appointment
     </a>
 </div>
+<div class="bg-white shadow p-6 rounded-lg">
+    <h2 class="text-xl font-semibold mb-4">Service Order Results</h2>
+    <ul class="list-disc list-inside">
+        {% for order in service_orders %}
+            <li>
+                <strong>{{ order.get_order_type_display }}</strong> by Dr. {{ order.doctor.get_full_name|default:order.doctor.username }}
+                <br><em>{{ order.result }}</em>
+            </li>
+        {% empty %}
+            <li>No results yet.</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}
 
 

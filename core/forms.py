@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import DateTimeInput
 from django.contrib.auth.forms import UserCreationForm
-from .models import Appointment, HealthReading, Prescription, User, PatientProfile, DoctorProfile
+from .models import Appointment, HealthReading, Prescription, ServiceOrder, User, PatientProfile, DoctorProfile
 from django.contrib.auth.forms import AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
@@ -20,7 +20,6 @@ class BaseUserRegistrationForm(UserCreationForm):
             field.widget.attrs.update({
                 'class': 'w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
             })
-
 
 
 class PatientRegistrationForm(BaseUserRegistrationForm):
@@ -74,6 +73,28 @@ class EmergencyRegistrationForm(BaseUserRegistrationForm):
         if commit:
             user.save()
         return user
+
+class DepartmentRegisterForm(BaseUserRegistrationForm):
+    department = forms.ChoiceField(choices=User.DEPARTMENT_CHOICES)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2', 'department']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.instance.role = 'DEPARTMENT'
+        self.instance.department = cleaned_data.get('department')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = 'DEPARTMENT'
+        user.department = self.cleaned_data['department']
+        if commit:
+            user.save()
+        return user
+
     
 class HealthReadingForm(forms.ModelForm):
     class Meta:
@@ -107,5 +128,25 @@ class AppointmentForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Filter only users with the DOCTOR role
         self.fields['doctor'].queryset = User.objects.filter(role='DOCTOR')
+        
+        
+class ServiceOrderForm(forms.ModelForm):
+    class Meta:
+        model = ServiceOrder
+        fields = ['patient', 'department', 'order_type']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['patient'].queryset = User.objects.filter(role='PATIENT')
+        
+class ServiceOrderResultForm(forms.ModelForm):
+    class Meta:
+        model = ServiceOrder
+        fields = ['result']
+        widgets = {
+            'result': forms.Textarea(attrs={
+                'class': 'w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'rows': 5
+            })
+        }

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -7,11 +8,26 @@ class User(AbstractUser):
         ('DOCTOR', 'Doctor'),
         ('ADMIN', 'Admin'),
         ('EMERGENCY', 'Emergency Services'),
+        ('DEPARTMENT', 'Department'),
     )
+    DEPARTMENT_CHOICES = [
+        ('radiology', 'Radiology'),
+        ('pathology', 'Pathology'),
+    ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    department = models.CharField(max_length=100, choices=DEPARTMENT_CHOICES, blank=True, null=True)
+    
+    def clean(self):
+        super().clean()
+        # Department field must be set only if role is DEPARTMENT
+        if self.role == 'DEPARTMENT' and not self.department:
+            raise ValidationError({'department': 'This field is required for Department users.'})
+        elif self.role != 'DEPARTMENT' and self.department:
+            raise ValidationError({'department': 'Only users with the DEPARTMENT role can have a department.'})
     
     def __str__(self):
         return f"{self.username} ({self.role})"
+    
     
 class PatientProfile(models.Model):
     user = models.OneToOneField('User', on_delete=models.CASCADE)
@@ -75,6 +91,7 @@ class ServiceOrder(models.Model):
         ('ct_scan', 'CT Scan'),
         ('pet_scan', 'PET Scan'),
         ('x_ray', 'X-Ray'),
+        ('blood_test', 'Blood Test'),
     ]
     patient = models.ForeignKey(
         'User',
@@ -95,4 +112,4 @@ class ServiceOrder(models.Model):
     
     def __str__(self):
         return f"{self.service_type} for {self.patient.username}"
-
+    

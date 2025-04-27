@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Department Orders{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold">Assigned Service Orders</h1>
+
+    {% for order in orders %}
+        <div class="bg-white shadow p-4 rounded">
+            <p><strong>Patient:</strong> {{ order.patient.get_full_name|default:order.patient.username }}</p>
+            <p><strong>Order:</strong> {{ order.get_order_type_display }}</p>
+            <p><strong>Doctor:</strong> {{ order.doctor.get_full_name|default:order.doctor.username }}</p>
+            <p><strong>Ordered At:</strong> {{ order.ordered_at }}</p>
+            <p><strong>Result:</strong> {{ order.result|default:"Pending" }}</p>
+
+            <a href="{% url 'upload_result' order.id %}" class="text-blue-600 underline mt-2 inline-block">
+                Upload Result
+            </a>
+        </div>
+    {% empty %}
+        <p>No service orders available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Department Dashboard{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-3xl font-bold">Welcome, {{ user.username }}!</h1>
+    <h2 class="text-xl font-semibold mb-4">Assigned Service Orders ({{ user.department|capfirst }})</h2>
+
+    <ul class="space-y-4">
+        {% for order in orders %}
+            <li class="bg-white shadow p-6 rounded">
+                <p><strong>Patient:</strong> {{ order.patient.get_full_name|default:order.patient.username }}</p>
+                <p><strong>Doctor:</strong> {{ order.doctor.get_full_name|default:order.doctor.username }}</p>
+                <p><strong>Order Type:</strong> {{ order.get_order_type_display }}</p>
+                <p><strong>Ordered At:</strong> {{ order.ordered_at|date:"M d, Y H:i" }}</p>
+
+                {% if not order.result %}
+                    <a href="{% url 'upload_service_result' order.id %}" 
+                       class="inline-block mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        Upload Result
+                    </a>
+                {% else %}
+                    <p class="mt-4 text-green-700 font-semibold">Result Submitted</p>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No service orders assigned to your department.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

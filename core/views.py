@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, get_user_model
 from django.contrib import messages
-from core.models import Appointment, HealthReading, Prescription
-from .forms import AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm
+from core.models import Appointment, HealthReading, Prescription, ServiceOrder
+from .forms import DepartmentRegisterForm, ServiceOrderResultForm, ServiceOrderForm, AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
@@ -36,6 +36,10 @@ def emergency_home(request):
     return render(request, 'pages/home_emergency.html')
 
 @login_required
+def department_home(request):
+    return render(request, 'pages/home_department.html')
+
+@login_required
 def home_redirect_view(request):
     role = request.user.role
     if role == 'PATIENT':
@@ -46,6 +50,8 @@ def home_redirect_view(request):
         return redirect('home_emergency')
     elif role == 'ADMIN':
         return redirect('home_admin')
+    elif role == 'DEPARTMENT':
+        return redirect('home_department')
     else:
         return redirect('login')  # fallback
     
@@ -56,9 +62,11 @@ def dashboard_patient(request):
     # prescriptions = get_sample_prescriptions()
     prescriptions = Prescription.objects.filter(patient=request.user).order_by('-created_at')
     appointments = Appointment.objects.filter(patient=request.user).order_by('-scheduled_time')
+    orders = ServiceOrder.objects.filter(patient=request.user).exclude(result='').order_by('-ordered_at')
     return render(request, 'dashboard/patient.html', {
         'appointments': appointments,
-        'prescriptions': prescriptions
+        'prescriptions': prescriptions,
+        'service_orders': orders,
     })
 
 @login_required
@@ -66,9 +74,11 @@ def dashboard_doctor(request):
     #patients = get_sample_patients()
     appointments = Appointment.objects.filter(doctor=request.user).order_by('-scheduled_time')
     prescriptions = Prescription.objects.filter(doctor=request.user).order_by('-created_at')
+    orders = ServiceOrder.objects.filter(doctor=request.user).exclude(result='').order_by('-ordered_at')
     return render(request, 'dashboard/doctor.html', {
         'appointments': appointments,
         'prescriptions': prescriptions,
+        'service_orders': orders,
     })
 
 @login_required
@@ -94,6 +104,12 @@ def dashboard_admin(request):
         'stats': stats,
         'recent_users': recent_users
     })
+    
+@login_required
+@user_passes_test(lambda u: u.role == 'DEPARTMENT')
+def dashboard_department(request):
+    orders = ServiceOrder.objects.filter(department=request.user.department).order_by('-ordered_at')
+    return render(request, 'dashboard/department.html', {'orders': orders})
 
 
 def register_patient(request):
@@ -128,6 +144,16 @@ def register_emergency(request):
     else:
         form = EmergencyRegistrationForm()
     return render(request, 'auth/register_emergency.html', {'form': form, 'title': 'Emergency'})
+
+def register_department(request):
+    if request.method == 'POST':
+        form = DepartmentRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = DepartmentRegisterForm()
+    return render(request, 'auth/register_department.html', {'form': form, 'title': 'Department'})
 
 
 
@@ -213,3 +239,42 @@ def schedule_appointment(request):
         form = AppointmentForm()
 
     return render(request, 'pages/schedule.html', {'form': form})
+
+
+@login_required
+@user_passes_test(lambda u: u.role == 'DOCTOR')
+def create_service_order(request):
+    if request.method == 'POST':
+        form = ServiceOrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.doctor = request.user
+            order.save()
+            return redirect('home_doctor')
+    else:
+        form = ServiceOrderForm()
+    
+    return render(request, 'pages/create_service_order.html', {'form': form})
+
+
+@login_required
+@user_passes_test(lambda u: u.role == 'DEPARTMENT')
+def department_orders(request):
+    orders = ServiceOrder.objects.filter(department=request.user.department)
+    return render(request, 'pages/department_orders.html', {'orders': orders})
+
+@login_required
+@user_passes_test(lambda u: u.role == 'DEPARTMENT')
+def upload_service_result(request, order_id):
+    order = get_object_or_404(ServiceOrder, id=order_id, department=request.user.department)
+
+    if request.method == 'POST':
+        form = ServiceOrderResultForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Service order result uploaded successfully!")
+            return redirect('dashboard_department')
+    else:
+        form = ServiceOrderResultForm(instance=order)
+
+    return render(request, 'pages/upload_service_result.html', {'form': form, 'order': order})

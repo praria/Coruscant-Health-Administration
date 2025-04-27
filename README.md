@@ -69,8 +69,11 @@ Stage 3: User Authentication and registration
 6. patience's username/ password: user2/ patience2, user3/ patience3
 7. doctor's username/ password: doctor2/ medical2, doctor3/ medical3
 8. emergency's username/password: emergency1/department1, emmergency2/ department2
+9. department's username/password: radiologist/department1, pathologist/department2
 
-stage 4: 
+stage 4: Health data and Presciptions
+1. Patients uplaoad health data
+2. Doctors view readings and write prescriptions
 pip install django-widget-tweaks
 
 

@@ -5,8 +5,14 @@ from .models import Appointment, User, PatientProfile, DoctorProfile, HealthRead
 class CustomUserAdmin(BaseUserAdmin):
     model = User
     list_display = ('username', 'email', 'role', 'is_staff', 'is_superuser')
+    list_filter = ('role', 'department', 'is_staff', 'is_superuser', 'is_active')
+    
     fieldsets = BaseUserAdmin.fieldsets + (
-        ('Role Info', {'fields': ('role',)}),
+        ('Role Info', {'fields': ('role', 'department')}),
+    )
+
+    add_fieldsets = BaseUserAdmin.add_fieldsets + (
+        ('Role Info', {'fields': ('role', 'department')}),
     )
 
 admin.site.register(User, CustomUserAdmin)

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Service Result{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Upload Result for {{ order.get_order_type_display }}</h2>
+<form method="POST" class="space-y-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Submit Result
+    </button>
+</form>
+{% endblock %}

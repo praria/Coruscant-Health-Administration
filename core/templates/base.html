@@ -11,6 +11,17 @@
 
     <!-- Navbar -->
     <nav class="bg-blue-700 text-white p-4">
+        {% if messages %}
+        <div class="max-w-4xl mx-auto mt-4">
+            {% for message in messages %}
+            <div class="p-4 mb-4 rounded text-white {{ message.tags }} 
+                        {% if message.tags == 'success' %} bg-green-500 {% elif message.tags == 'error' %} bg-red-500 {% else %} bg-blue-500 {% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="text-xl font-bold"> Coruscant Medical System</div>
             <div class="space-x-4">
@@ -18,22 +29,24 @@
                     <span>Welcome, {{ user.username }}!</span>
 
                     {% if user.role == "PATIENT" %}
-                        <a href="#" class="hover:underline">My Health</a>
-                        <a href="#" class="hover:underline">Prescriptions</a>
-                        <a href="{% url 'dashboard_patient' %}" class="hover:underline">My Dashboard</a>
+                        <a href="{% url 'home_patient' %}" class="hover:underline">Homepage</a>
+                        <a href="{% url 'dashboard_patient' %}" class="hover:underline">Dashboard</a>
                         
                     {% elif user.role == "DOCTOR" %}
-                        <a href="#" class="hover:underline">Patients</a>
-                        <a href="#" class="hover:underline">Orders</a>
-                        <a href="{% url 'dashboard_doctor' %}" class="hover:underline">Doctor Dashboard</a>
+                        <a href="{% url 'home_doctor' %}" class="hover:underline">Homepage</a>
+                        <a href="{% url 'dashboard_doctor' %}" class="hover:underline">Dashboard</a>
+
+                    {% elif user.role == "DEPARTMENT" %}
+                        <a href="{% url 'home_department' %}" class="hover:underline">Homepage</a>
+                        <a href="{% url 'dashboard_department' %}" class="hover:underline">Dashboard</a>
 
                     {% elif user.role == "EMERGENCY" %}
-                        <a href="#" class="hover:underline">Quick Intake</a>
-                        <a href="{% url 'dashboard_emergency' %}" class="hover:underline">Emergency Dashboard</a>
+                        <a href="{% url 'home_emergency' %}" class="hover:underline">Homepage</a>
+                        <a href="{% url 'dashboard_emergency' %}" class="hover:underline">Dashboard</a>
 
                     {% elif user.role == "ADMIN" %}
-                        <a href="{% url 'home_admin' %}" class="hover:underline">Home</a>
-                        <a href="{% url 'dashboard_admin' %}" class="hover:underline">Admin Dashboard</a>
+                        <a href="{% url 'home_admin' %}" class="hover:underline">Homepage</a>
+                        <a href="{% url 'dashboard_admin' %}" class="hover:underline">Dashboard</a>
                     {% endif %}
 
                     <form method="post" action="{% url 'logout' %}" class="inline">
@@ -42,14 +55,39 @@
                             Logout
                         </button>
                     </form>
-                {% else %}
-                    <a href="{% url 'login' %}" class="hover:underline">Login</a>
-                    <a href="{% url 'register_patient' %}" class="hover:underline">Register (Patient)</a>
-                    <a href="{% url 'register_doctor' %}" class="hover:underline">Register (Doctor)</a>
-                    <a href="{% url 'register_emergency' %}" class="hover:underline">Register (Emergency)</a>
-                {% endif %}
 
-
+                    {% else %}
+                    <div class="flex items-center space-x-4">
+                        <!-- Login Button -->
+                        <a href="{% url 'login' %}" class="text-sm font-medium text-white-600 hover:underline">
+                            Login
+                        </a>
+                    
+                        <!-- Register Dropdown -->
+                        <div class="relative group">
+                            <button
+                                type="button"
+                                class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                Register
+                                <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                    
+                            <!-- Dropdown Menu -->
+                            <div
+                                class="hidden absolute right-0 mt-0 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50 group-hover:block"
+                            >
+                                <a href="{% url 'register_patient' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Patient</a>
+                                <a href="{% url 'register_doctor' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Doctor</a>
+                                <a href="{% url 'register_emergency' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Emergency</a>
+                                <a href="{% url 'register_department' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Department</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
             </div>
         </div>
     </nav>

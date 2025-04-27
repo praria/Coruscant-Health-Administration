@@ -1,2 +1,5 @@
 {% extends 'base.html' %}
-<h1>Welcome admin {{ user.username }}</h1>
+
+{% block content %}
+<h1 class="text-center bg-gray-100" >{{ user.username }}! Welcome to Admin homepage</h1>
+{% endblock %}
