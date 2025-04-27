@@ -2,6 +2,10 @@ from django.urls import path
 from django.contrib.auth.views import LogoutView
 from . import views
 
+
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
@@ -35,6 +39,11 @@ urlpatterns = [
     path('orders/create/', views.create_service_order, name='create_service_order'),
     path('orders/department/', views.department_orders, name='department_orders'),
     path('orders/<int:order_id>/upload-result/', views.upload_service_result, name='upload_service_result'),
-
+    
+    path('documents/upload/', views.upload_medical_document, name='upload_medical_document'),
+    path('documents/', views.document_list, name='document_list'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

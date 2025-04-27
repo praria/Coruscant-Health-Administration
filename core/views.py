@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, get_user_model
 from django.contrib import messages
-from core.models import Appointment, HealthReading, Prescription, ServiceOrder
-from .forms import DepartmentRegisterForm, ServiceOrderResultForm, ServiceOrderForm, AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm
+from core.models import Appointment, HealthReading, Prescription, ServiceOrder, MedicalDocument, User
+from .forms import DepartmentRegisterForm, ServiceOrderResultForm, ServiceOrderForm, AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm, MedicalDocumentForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
@@ -278,3 +278,43 @@ def upload_service_result(request, order_id):
         form = ServiceOrderResultForm(instance=order)
 
     return render(request, 'pages/upload_service_result.html', {'form': form, 'order': order})
+
+
+
+@login_required
+def upload_medical_document(request):
+    if request.method == 'POST':
+        form = MedicalDocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            document = form.save(commit=False)
+            document.uploaded_by = request.user
+            if request.user.role == 'PATIENT':
+                document.patient = request.user
+            elif request.user.role == 'DOCTOR':
+                patient_id = request.POST.get('patient_id')
+                document.patient = get_object_or_404(User, id=patient_id, role='PATIENT')
+            document.save()
+            return redirect('home_patient' if request.user.role == 'PATIENT' else 'home_doctor')
+    else:
+        form = MedicalDocumentForm()
+
+    patients = None
+    if request.user.role == 'DOCTOR':
+        patients = User.objects.filter(role='PATIENT')  # Simple for now
+
+    return render(request, 'pages/upload_document.html', {'form': form, 'patients': patients})
+
+
+
+
+@login_required
+def document_list(request):
+    if request.user.role == 'PATIENT':
+        documents = MedicalDocument.objects.filter(patient=request.user)
+    elif request.user.role == 'DOCTOR':
+        documents = MedicalDocument.objects.filter(uploaded_by=request.user)
+    else:
+        documents = MedicalDocument.objects.all() 
+
+    return render(request, 'pages/document_list.html', {'documents': documents})
+

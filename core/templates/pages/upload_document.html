@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Upload Medical Document{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">Upload Medical Document</h1>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        {% if patients %}
+            <label for="patient_id" class="block font-medium">Select Patient:</label>
+            <select name="patient_id" class="w-full border p-2 rounded">
+                {% for patient in patients %}
+                    <option value="{{ patient.id }}">{{ patient.get_full_name|default:patient.username }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+        
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Upload
+        </button>
+    </form>
+</div>
+{% endblock %}

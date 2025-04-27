@@ -111,5 +111,17 @@ class ServiceOrder(models.Model):
     result = models.TextField(blank=True)
     
     def __str__(self):
-        return f"{self.service_type} for {self.patient.username}"
+        return f"{self.order_type} for {self.patient.username}"
+    
+    
+    
+class MedicalDocument(models.Model):
+    patient = models.ForeignKey('User', on_delete=models.CASCADE, limit_choices_to={'role': 'PATIENT'})
+    uploaded_by = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='uploaded_documents')
+    file = models.FileField(upload_to='documents/')
+    description = models.TextField(blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Document for {self.patient.username} uploaded at {self.uploaded_at.strftime('%Y-%m-%d')}"
     

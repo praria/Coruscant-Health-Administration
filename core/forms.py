@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import DateTimeInput
 from django.contrib.auth.forms import UserCreationForm
-from .models import Appointment, HealthReading, Prescription, ServiceOrder, User, PatientProfile, DoctorProfile
+from .models import MedicalDocument, Appointment, HealthReading, Prescription, ServiceOrder, User, PatientProfile, DoctorProfile
 from django.contrib.auth.forms import AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
@@ -149,4 +149,20 @@ class ServiceOrderResultForm(forms.ModelForm):
                 'class': 'w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
                 'rows': 5
             })
+        }
+        
+        
+class MedicalDocumentForm(forms.ModelForm):
+    class Meta:
+        model = MedicalDocument
+        fields = ['file', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={
+                'class': 'w-full border p-2 rounded',
+                'rows': 3,
+                'placeholder': 'Optional description...'
+            }),
+            'file': forms.ClearableFileInput(attrs={
+                'class': 'w-full border p-2 rounded',
+            }),
         }

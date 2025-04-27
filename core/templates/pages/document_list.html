@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Medical Documents{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 bg-white shadow rounded">
+    <h1 class="text-2xl font-bold mb-4">Medical Documents</h1>
+
+    <a href="{% url 'upload_medical_document' %}" class="inline-block mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Upload New Document
+    </a>
+
+    {% if documents %}
+        <ul class="space-y-4">
+            {% for document in documents %}
+                <li class="bg-gray-100 p-4 rounded shadow">
+                    <p><strong>Description:</strong> {{ document.description|default:"No description" }}</p>
+                    <p><strong>Uploaded By:</strong> {{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }}</p>
+                    <p><strong>Date:</strong> {{ document.uploaded_at|date:"M d, Y H:i" }}</p>
+
+                    {% if ".jpg" in document.file.url|lower or ".jpeg" in document.file.url|lower or ".png" in document.file.url|lower %}
+                        <a href="{{ document.file.url }}" target="_blank">
+                            <img src="{{ document.file.url }}" alt="Document Image" class="w-64 h-auto rounded border mt-4" />
+                        </a>
+                    {% elif ".pdf" in document.file.url|lower %}
+                        <a href="{{ document.file.url }}" target="_blank" class="text-blue-600 hover:underline">
+                            View PDF
+                        </a>                    
+                    {% else %}
+                        <!-- Download Link for Other Files -->
+                        <a href="{{ document.file.url }}" target="_blank" 
+                        class="inline-block mt-4 bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
+                            Download/View File
+                        </a>
+                    {% endif %}
+
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No documents found.</p>
+    {% endif %}
+</div>
+{% endblock %}

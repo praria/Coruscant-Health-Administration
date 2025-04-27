@@ -38,15 +38,27 @@
         {% endfor %}
     </ul>
 </div>
-<a href="{% url 'view_health_readings' %}" class="block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+<div class="mt-6">
+    <a href="{% url 'view_health_readings' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
     View Patient Readings
-</a>
-<a href="{% url 'write_prescription' %}" class="block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4">
-    Write a Prescription
-</a>
-<a href="{% url 'create_service_order' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-    Create Service Order
-</a>
+    </a>
+</div>
+<div class="mt-6">
+    <a href="{% url 'write_prescription' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+        Write a Prescription
+    </a>
+</div>
+<div class="mt-6">
+    <a href="{% url 'create_service_order' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+        Create Service Order
+    </a>
+</div>
+<div class="mt-6">
+    <a href="{% url 'document_list' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+        View/ Upload Documents
+    </a>        
+</div>
+
 
 
 {% endblock %}
