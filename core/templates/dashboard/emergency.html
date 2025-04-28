@@ -1,24 +1,70 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% block title %}Emergency Services Dashboard{% endblock %}
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Emergency Department</h2>
-<p>Welcome, {{ user.username }}!</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-    <div class="p-4 bg-red-100 rounded shadow">
-        <h3 class="font-semibold text-lg mb-2">Quick Intake</h3>
-        <ul class="bg-white shadow rounded p-4 space-y-2">
+<div x-data="{ open: false }" class="space-y-8">
+    <h2 class="text-3xl font-bold">Emergency Department</h2>
+    <p>Welcome, {{ user.username }}!</p>
+
+    <!-- Button to Open Modal -->
+    <button @click="open = true" 
+        class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg text-lg">
+        ➕ Add Emergency Intake
+    </button>
+
+    <!-- Modal -->
+    <div x-show="open" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+            <h3 class="text-xl font-semibold mb-4">New Emergency Intake</h3>
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <!-- Patient Name Field -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Patient Name</label>
+                    {{ form.name|add_class:"w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+                </div>
+
+                <!-- Symptoms Field -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Symptoms</label>
+                    {{ form.symptoms|add_class:"w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+                </div>
+
+                <!-- Vitals Field -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Vitals</label>
+                    {{ form.vitals|add_class:"w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-end space-x-2">
+                    <button type="button" @click="open = false" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recent Emergency Intakes -->
+    <div class="bg-orange-100 p-6 rounded shadow">
+        <h3 class="font-semibold text-xl mb-4">Recent Emergency Intakes</h3>
+        <ul class="bg-white p-4 rounded shadow space-y-3 max-h-96 overflow-y-auto">
             {% for log in logs %}
-            <li class="border-b py-2">
-                <strong>{{ log.date }}</strong> - {{ log.incident }} handled by {{ log.handled_by }}
+            <li class="border-b pb-2">
+                <p><strong>{{ log.name }}</strong> — {{ log.symptoms|truncatechars:50 }}</p>
+                <p class="text-sm text-gray-700"><strong>Vitals:</strong> {{ log.vitals|default:"Not recorded" }}</p>
+                <p class="text-xs text-gray-500">Handled by {{ log.handled_by.username }} on {{ log.date|date:"M d, Y H:i" }}</p>
             </li>
             {% empty %}
-            <li>No recent emergency incidents.</li>
+            <li>No recent intakes yet.</li>
             {% endfor %}
         </ul>
-    </div>
-    <div class="p-4 bg-orange-100 rounded shadow">
-        <h3 class="font-semibold text-lg mb-2">Emergency Protocols</h3>
-        <p>Access emergency guidelines and contacts.</p>
     </div>
 </div>
 {% endblock %}

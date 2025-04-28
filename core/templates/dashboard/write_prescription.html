@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Write Prescription{% endblock %}
 
@@ -7,7 +8,19 @@
 
 <form method="post" class="space-y-4 bg-white p-6 rounded-lg shadow">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <div class="space-y-4">
+        <div>
+            <label for="{{ form.patient.id_for_label }}" class="block text-sm font-medium text-gray-700">Select Patient:</label>
+            {{ form.patient|add_class:"input input-bordered border-2 border-gray-300 w-full focus:ring-2 focus:ring-blue-500" }}
+        </div>
+
+        <div>
+            <label for="{{ form.instructions.id_for_label }}" class="block text-sm font-medium text-gray-700">Instructions:</label>
+            {{ form.instructions|add_class:"textarea textarea-bordered border-2 border-gray-300 w-full focus:ring-2 focus:ring-blue-500" }}
+        </div>
+    </div>
+
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
         Submit Prescription
     </button>

@@ -7,7 +7,7 @@
 
     <ul class="space-y-4">
         {% for order in orders %}
-            <li class="bg-white shadow p-6 rounded">
+            <li class="bg-blue-100 shadow p-6 rounded">
                 <p><strong>Patient:</strong> {{ order.patient.get_full_name|default:order.patient.username }}</p>
                 <p><strong>Doctor:</strong> {{ order.doctor.get_full_name|default:order.doctor.username }}</p>
                 <p><strong>Order Type:</strong> {{ order.get_order_type_display }}</p>

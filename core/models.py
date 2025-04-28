@@ -125,3 +125,16 @@ class MedicalDocument(models.Model):
     def __str__(self):
         return f"Document for {self.patient.username} uploaded at {self.uploaded_at.strftime('%Y-%m-%d')}"
     
+    
+    
+class EmergencyIntake(models.Model):
+    name = models.CharField(max_length=255)
+    symptoms = models.TextField()
+    vitals = models.TextField(blank=True)
+    handled_by = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'EMERGENCY'})
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Emergency Intake: {self.name} ({self.date.strftime('%Y-%m-%d %H:%M')})"
+
+    

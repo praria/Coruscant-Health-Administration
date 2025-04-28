@@ -1,18 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, get_user_model
 from django.contrib import messages
-from core.models import Appointment, HealthReading, Prescription, ServiceOrder, MedicalDocument, User
-from .forms import DepartmentRegisterForm, ServiceOrderResultForm, ServiceOrderForm, AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm, MedicalDocumentForm
+from core.models import Appointment, HealthReading, Prescription, ServiceOrder, MedicalDocument, User, EmergencyIntake
+from .forms import DepartmentRegisterForm, ServiceOrderResultForm, ServiceOrderForm, AppointmentForm, CustomLoginForm, HealthReadingForm, PatientRegistrationForm, DoctorRegistrationForm, EmergencyRegistrationForm, PrescriptionForm, MedicalDocumentForm, EmergencyIntakeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
 
-from .mock_data import (
-    get_sample_appointments,
-    get_sample_prescriptions,
-    get_sample_patients,
-    get_sample_emergency_logs,
-)
+# from .mock_data import (
+#     get_sample_appointments,
+#     get_sample_prescriptions,
+#     get_sample_patients,
+#     get_sample_emergency_logs,
+# )
 
 
 @login_required
@@ -82,11 +82,21 @@ def dashboard_doctor(request):
     })
 
 @login_required
+@user_passes_test(lambda u: u.role == 'EMERGENCY')
 def dashboard_emergency(request):
-    logs = get_sample_emergency_logs()
-    return render(request, 'dashboard/emergency.html', {
-        'logs': logs
-    })
+    if request.method == 'POST':
+        form = EmergencyIntakeForm(request.POST)
+        if form.is_valid():
+            intake = form.save(commit=False)
+            intake.handled_by = request.user
+            intake.save()
+            return redirect('dashboard_emergency')  # reload the dashboard after intake
+    else:
+        form = EmergencyIntakeForm()
+
+    logs = EmergencyIntake.objects.order_by('-date')[:10]
+
+    return render(request, 'dashboard/emergency.html', {'form': form, 'logs': logs})
     
 @login_required
 def dashboard_admin(request):
@@ -177,13 +187,13 @@ class CustomLoginView(LoginView):
         elif user.role == 'ADMIN':
             return reverse('home_admin')
 
-        return reverse('home')  # fallback route
+        return reverse('home')
     
 
 @login_required
 def submit_health_reading(request):
     if request.user.role != 'PATIENT':
-        return redirect('home')  # restrict access to patients only
+        return redirect('home')
 
     if request.method == 'POST':
         form = HealthReadingForm(request.POST)
@@ -232,7 +242,7 @@ def schedule_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.patient = request.user  # Ensure patient is logged-in user
+            appointment.patient = request.user
             appointment.save()
             return redirect('home_patient') 
     else:

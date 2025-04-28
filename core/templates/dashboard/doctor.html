@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
+
 {% block title %}Doctor Dashboard{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Doctor Dashboard</h2>
 <p>Welcome, Dr. {{ user.username }}!</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-    <div class="p-4 bg-yellow-100 rounded shadow">
-        <h3 class="font-semibold text-lg mb-2">Your Appointments</h3>
-        <ul class="bg-white shadow rounded p-4 space-y-2">
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <!-- Your Appointments Section -->
+    <div class="p-6 bg-yellow-100 rounded-xl shadow-lg">
+        <h3 class="font-semibold text-lg mb-4">Your Appointments</h3>
+        <ul class="space-y-4">
             {% for appointment in appointments %}
-                <li class="bg-gray-100 p-4 rounded shadow-sm">
+                <li class="bg-white p-4 rounded-lg shadow-md">
                     <p class="font-semibold">Patient: {{ appointment.patient.get_full_name|default:appointment.patient.username }}</p>
                     <p><strong>Time:</strong> {{ appointment.scheduled_time }}</p>
                     <p><strong>Notes:</strong> {{ appointment.notes }}</p>
@@ -16,49 +20,56 @@
             {% empty %}
                 <li>No appointments found.</li>
             {% endfor %}
-
         </ul>
     </div>
-    <div class="p-4 bg-purple-100 rounded shadow">
-        <h3 class="font-semibold text-lg mb-2">Patient List</h3>
+
+    <!-- Patient List Section -->
+    <div class="p-6 bg-purple-100 rounded-xl shadow-lg">
+        <h3 class="font-semibold text-lg mb-4">Patient List</h3>
         <p>Manage your patient records.</p>
     </div>
-
 </div>
-<div class="bg-white shadow p-6 rounded-lg">
+
+<!-- Service Order Results Section -->
+<div class="p-6 bg-white shadow-lg rounded-xl mt-6">
     <h2 class="text-xl font-semibold mb-4">Service Order Results</h2>
-    <ul class="list-disc list-inside">
+    <ul class="space-y-4">
         {% for order in service_orders %}
-            <li>
+            <li class="bg-gray-100 p-4 rounded-lg shadow-md">
                 <strong>{{ order.get_order_type_display }}</strong> by Dr. {{ order.doctor.get_full_name|default:order.doctor.username }}
-                <br><em>{{ order.result }}</em>
+                <br><em class="text-gray-600">{{ order.result }}</em>
             </li>
         {% empty %}
             <li>No results yet.</li>
         {% endfor %}
     </ul>
 </div>
-<div class="mt-6">
-    <a href="{% url 'view_health_readings' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-    View Patient Readings
-    </a>
-</div>
-<div class="mt-6">
-    <a href="{% url 'write_prescription' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-        Write a Prescription
-    </a>
-</div>
-<div class="mt-6">
-    <a href="{% url 'create_service_order' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-        Create Service Order
-    </a>
-</div>
-<div class="mt-6">
-    <a href="{% url 'document_list' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-        View/ Upload Documents
-    </a>        
+
+<!-- Action Buttons Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+    <div>
+        <a href="{% url 'view_health_readings' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            View Patient Readings
+        </a>
+    </div>
+    <div>
+        <a href="{% url 'write_prescription' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            Write a Prescription
+        </a>
+    </div>
 </div>
 
-
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+    <div>
+        <a href="{% url 'create_service_order' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            Create Service Order
+        </a>
+    </div>
+    <div>
+        <a href="{% url 'document_list' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            View/Upload Documents
+        </a>
+    </div>
+</div>
 
 {% endblock %}

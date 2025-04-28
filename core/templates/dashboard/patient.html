@@ -1,14 +1,37 @@
 {% extends 'base.html' %}
+
 {% block title %}Patient Dashboard{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Patient Dashboard</h2>
 <p>Welcome, {{ user.username }}!</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-   <div class="p-4 bg-blue-100 rounded shadow">
-       <h3 class="font-semibold text-lg mb-2">Your Appointments:</h3>
-       <ul class="mb-4">
+
+<!-- Action Tabs (Submit Health Data, Schedule Appointment, View/Upload Documents) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+    <div>
+        <a href="{% url 'submit_health_reading' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            Submit Health Data
+        </a>
+    </div>
+    <div>
+        <a href="{% url 'schedule_appointment' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            Schedule an Appointment
+        </a>
+    </div>
+    <div>
+        <a href="{% url 'document_list' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+            View/Upload Documents
+        </a>
+    </div>
+</div>
+
+<!-- Appointments Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div class="p-6 bg-blue-100 rounded-xl shadow-lg">
+        <h3 class="font-semibold text-lg mb-4">Your Appointments:</h3>
+        <ul class="space-y-4">
             {% for appointment in appointments %}
-                <li class="bg-gray-100 p-4 rounded shadow-sm">
+                <li class="bg-gray-100 p-4 rounded-lg shadow-md">
                     <p class="font-semibold">Doctor: {{ appointment.doctor.get_full_name|default:appointment.doctor.username }}</p>
                     <p><strong>Scheduled:</strong> {{ appointment.scheduled_time|date:"M d, Y H:i" }}</p>
                     <p><strong>Notes:</strong> {{ appointment.notes }}</p>
@@ -16,54 +39,39 @@
             {% empty %}
                 <li>No appointments found.</li>
             {% endfor %}
-       </ul>
-   </div>
-   
+        </ul>
+    </div>
 
-   <div class="p-4 bg-green-100 rounded shadow">
-       <h3 class="font-semibold text-lg mb-2">Prescriptions:</h3>
-       <ul class="space-y-2">
-        {% for prescription in prescriptions %}
-            <li class="bg-gray-100 p-4 rounded shadow-sm">
-                <p class="font-semibold">Doctor: {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}</p>
-                <p><strong>Date:</strong> {{ prescription.created_at|date:"M d, Y H:i" }}</p>
-                <p><strong>Details:</strong> {{ prescription.instructions}}</p>
-            </li>
-        {% empty %}
-            <li>No prescriptions yet.</li>
-        {% endfor %}
-    </ul>
-   </div>
+    <!-- Prescriptions Section -->
+    <div class="p-6 bg-green-100 rounded-xl shadow-lg">
+        <h3 class="font-semibold text-lg mb-4">Prescriptions:</h3>
+        <ul class="space-y-4">
+            {% for prescription in prescriptions %}
+                <li class="bg-gray-100 p-4 rounded-lg shadow-md">
+                    <p class="font-semibold">Doctor: {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}</p>
+                    <p><strong>Date:</strong> {{ prescription.created_at|date:"M d, Y H:i" }}</p>
+                    <p><strong>Details:</strong> {{ prescription.instructions}}</p>
+                </li>
+            {% empty %}
+                <li>No prescriptions yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
-<div class="mt-6">
-    <a href="{% url 'submit_health_reading' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Submit Health Data
-    </a>
-</div>
-<div class="mt-6">
-    <a href="{% url 'schedule_appointment' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Schedule an Appointment
-    </a>    
-</div>
-<div class="mt-6">
-    <a href="{% url 'document_list' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        View/ Upload Documents
-    </a>        
-</div>
-<div class="bg-white shadow p-6 rounded-lg">
+
+<!-- Service Order Results Section -->
+<div class="p-6 bg-blue-100 shadow-lg rounded-xl mt-6">
     <h2 class="text-xl font-semibold mb-4">Service Order Results</h2>
-    <ul class="list-disc list-inside">
+    <ul class="space-y-4">
         {% for order in service_orders %}
-            <li>
+            <li class="bg-gray-100 p-4 rounded-lg shadow-md">
                 <strong>{{ order.get_order_type_display }}</strong> by Dr. {{ order.doctor.get_full_name|default:order.doctor.username }}
-                <br><em>{{ order.result }}</em>
+                <br><em class="text-gray-600">{{ order.result }}</em>
             </li>
         {% empty %}
             <li>No results yet.</li>
         {% endfor %}
     </ul>
 </div>
+
 {% endblock %}
-
-
-

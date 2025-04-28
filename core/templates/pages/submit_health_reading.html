@@ -8,22 +8,24 @@
 
 <form method="POST" class="space-y-4">
     {% csrf_token %}
+    
     <div>
         <label class="block text-sm font-medium text-gray-700">Heart Rate</label>
-        {{ form.heart_rate|add_class:"input input-bordered w-full" }}
+        {{ form.heart_rate|add_class:"input input-bordered border-2 border-gray-300 w-full focus:ring-2 focus:ring-blue-500" }}
     </div>
     <div>
         <label class="block text-sm font-medium text-gray-700">Blood Pressure</label>
-        {{ form.blood_pressure|add_class:"input input-bordered w-full" }}
+        {{ form.blood_pressure|add_class:"input input-bordered border-2 border-gray-300 w-full focus:ring-2 focus:ring-blue-500" }}
     </div>
     <div>
         <label class="block text-sm font-medium text-gray-700">Temperature</label>
-        {{ form.temperature|add_class:"input input-bordered w-full" }}
+        {{ form.temperature|add_class:"input input-bordered border-2 border-gray-300 w-full focus:ring-2 focus:ring-blue-500" }}
     </div>
     <div>
         <label class="block text-sm font-medium text-gray-700">Notes</label>
-        {{ form.notes|add_class:"textarea textarea-bordered w-full" }}
+        {{ form.notes|add_class:"textarea textarea-bordered border-2 border-gray-300 w-full focus:ring-2 focus:ring-blue-500" }}
     </div>
+    
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
         Submit
     </button>

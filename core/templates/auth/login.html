@@ -29,6 +29,10 @@
         <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700">
             Login
         </button>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'password_reset' %}" class="text-blue-500 hover:underline text-sm">Forgot your password?</a>
+        </div>
     </form>
 </div>
 {% endblock %}

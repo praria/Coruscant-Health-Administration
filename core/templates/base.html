@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Tailwind CDN (for development use only) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-100 font-sans">
 
@@ -74,16 +75,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                    
-                            <!-- Dropdown Menu -->
-                            <div
-                                class="hidden absolute right-0 mt-0 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50 group-hover:block"
-                            >
-                                <a href="{% url 'register_patient' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Patient</a>
-                                <a href="{% url 'register_doctor' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Doctor</a>
-                                <a href="{% url 'register_emergency' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Emergency</a>
-                                <a href="{% url 'register_department' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Department</a>
-                            </div>
+                        <div class="hidden absolute right-0 mt-0 w-48 bg-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50 group-hover:block">
+                            <a href="{% url 'register_patient' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-md transition-all duration-200">Patient</a>
+                            <a href="{% url 'register_doctor' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-md transition-all duration-200">Doctor</a>
+                            <a href="{% url 'register_emergency' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-md transition-all duration-200">Emergency</a>
+                            <a href="{% url 'register_department' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-md transition-all duration-200">Department</a>
+                        </div>
+                            
                         </div>
                     </div>
                     {% endif %}

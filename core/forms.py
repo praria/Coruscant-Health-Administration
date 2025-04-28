@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import DateTimeInput
 from django.contrib.auth.forms import UserCreationForm
-from .models import MedicalDocument, Appointment, HealthReading, Prescription, ServiceOrder, User, PatientProfile, DoctorProfile
+from .models import MedicalDocument, Appointment, HealthReading, Prescription, ServiceOrder, User, PatientProfile, DoctorProfile, EmergencyIntake
 from django.contrib.auth.forms import AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
@@ -166,3 +166,15 @@ class MedicalDocumentForm(forms.ModelForm):
                 'class': 'w-full border p-2 rounded',
             }),
         }
+        
+        
+
+class EmergencyIntakeForm(forms.ModelForm):
+    class Meta:
+        model = EmergencyIntake
+        fields = ['name', 'symptoms', 'vitals']
+        widgets = {
+            'symptoms': forms.Textarea(attrs={'rows': 3}),
+            'vitals': forms.Textarea(attrs={'rows': 2}),
+        }
+
