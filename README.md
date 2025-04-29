@@ -1,126 +1,104 @@
-🏨 Coruscant Health Administration
-Coruscant Health Administration is a full-featured, secure, and scalable medical management system built with Django and Tailwind CSS.
-It enables hospitals and clinics to efficiently manage patients, doctors, departments, emergency services (Radiology and Pathology), appointments, health readings, prescriptions, service orders, and encrypted medical documents — all from role-based dashboards.
-Security, document encryption, responsive design, and role-based access control are core pillars of the system.
+# 🏨 Coruscant Health Administration
+It is a full-featured, secure, and scalable medical management system built with ** Django and Tailwind CSS**. 
+It enables hospitals and clinics to efficiently manage patients, doctors, departments, emergency services (Radiology and Pathology), appointments, health readings, prescriptions, service orders, and encrypted medical documents - all from role-based dashboards.
+Security, document encryption, responsive design, and role-based access control are core pillars of the system
 
-✨ Features
-🔐 Authentication and Authorization
-Secure login, registration, and logout
+# ✨ Features 
 
-Role-based access control (Admin (Superuser), Admin (General), Patient, Doctor, Department, Emergency)
+# 1. Authentication and Authorization:
+    * Secure login, registration, and logout
+    * Role-based access control [Admin(super user) and admin(general), Patient, Doctor, Department, Emergency]
 
-🏥 Patient Dashboard
-Submit health readings (heart rate, blood pressure, temperature, etc.)
 
-View prescriptions and service order results
+# 2. Patient Dashboard:
+    * Submit health readings - heart rate, blood pressure, temperature etc
+    * View prescriptions and service order results
+    * Schedule appointment
+    * Upload and view personal documents
 
-Schedule appointments
 
-Upload and view personal documents
+# 3. Doctor Dashboard:
+    * View and manage appointments
+    * Doctors view readings and submit prescriptions for patients
+    * Create service orders (x-ray, pet scan, ct scan, blood works) to departments (Radiology, Pathology) for patients
+    * View service order results
 
-🩺 Doctor Dashboard
-View and manage appointments
+# 4. Department Dashboard:
+    * View assigned service orders for patients placed by doctors
+    * Fulfill orders and upload results for Radiology and Pathology services
 
-View patient readings and submit prescriptions
+# 5. Emergency Dashboard:
+    * Manage and respond to emergency cases
+    * Quickly intake new patients
+    
+# 6. Admin Features:
+    * Super Admin Dashboard:
+        * Full control over the entire system via Django Admin panel
+        * Manage all users (patients, doctors, emergency, department users, other admins)
+        * Create, edit, and delete any user account
+        * Manage appointments, prescriptions, health readings, service orders, and documents
+        * View and modify all database easily
+        * Assign user roles during or after registration (patient, Doctor, Emergency, Department, Admin)
+        * Oversee system-wide notifications (email, push notifications if integrated)
 
-Create service orders (X-ray, PET scan, CT scan, bloodwork) for patients
+    * General Admin Dashboard:
+        * Limited adimin access (based on permissions)
+        * View system data and statistics
 
-View service order results
+# 7. Password Management:
+    * Password reset functionality
+    * Secure password update with email notifications even in development mode
 
-🏥 Department Dashboard
-View assigned service orders from doctors
+# 8. Document Encryption
+    * All uploaded medical documents are encrypted before being stored on the server. 
+    * Only authenticated users with appropriate permissions (e.g., the uploader or an administrator) can access or delete these documents.
 
-Fulfill orders and upload results (Radiology and Pathology services)
+# 9. Responsive Design:
+    * Built with Tailwind CSS for responsive beautiful UI
+    * Smooth navigation and clean layouts 
 
-🚑 Emergency Dashboard
-Manage and respond to emergency cases
+# 10. Future Improvements:
+    * Integrate push notifications (Firebase)
+    * Switch SQLite to PostgreSQL for production
 
-Quickly intake new patients
 
-🛠️ Admin Features
-Super Admin Dashboard
-Full control via Django Admin Panel
+# 🛠 Tech Stack
 
-Manage users (patients, doctors, emergency, department, general admins)
+1. Backend: Django (Python)
+2. Frontend: Tailwind CSS, HTMX
+3. Database: SQLite (development), easily swappable to PostgreSQL for production 
+4. Encryption: Fernet encryption (cryptography library) for document security
+5. Other:
+    * Django's built-in authentication system
+    * Widget Tweaks for form customization
+    * Email backend (for password reset functionality)
 
-Create, edit, and delete user accounts
 
-Manage appointments, prescriptions, health readings, service orders, and documents
+# 📦 Setup Instructions
 
-View and modify database entries
+1. clone the repository
+    * git clone 
+    * cd Coruscant-Health-Administration
 
-Assign or modify user roles
+2. Create and Activate virtual environment
+    * python3 -m venv medical_venv
+    * source medical_venv/bin/activate 
 
-Oversee system-wide notifications (email, push notifications if integrated)
+3. Install Dependencies
+    * pip install -r requirements.txt
+    * Note: Make sure you install cryptography, widget-tweaks etc
 
-General Admin Dashboard
-Limited access based on assigned permissions
+4. Database Migration
+    * python3 manage.py makemigrations
+    * python3 manage.py migrate
 
-View system data and statistics
+5. Create a Superuser (Admin)
+    * python3 manage.py createsuperuser
 
-🔑 Password Management
-Password reset functionality
+6. Run the development server
+    * python manage.py runserver
+    * Visit http://127.0.0.1:8000/ to access the application
 
-Secure password updates with email notifications (even in development mode)
-
-📄 Document Encryption
-All uploaded medical documents are encrypted before being stored.
-
-Only authenticated users (uploader or admins) can access or delete documents.
-
-🌐 Responsive Design
-Built with Tailwind CSS for a modern, mobile-friendly UI
-
-Smooth navigation and clean layouts
-
-🚀 Future Improvements
-Integrate real push notifications (e.g., Firebase)
-
-Switch from SQLite to PostgreSQL for production
-
-🛠 Tech Stack
-Backend: Django (Python)
-
-Frontend: Tailwind CSS, HTMX
-
-Database: SQLite (development), easily swappable to PostgreSQL for production
-
-Encryption: Fernet (Cryptography library) for document security
-
-Other Tools:
-
-Django's built-in authentication system
-
-Widget Tweaks (for form customization)
-
-Email backend (for password reset functionality)
-
-📦 Setup Instructions
-
-# 1. Clone the repository
-git clone <your-repo-url>
-cd Coruscant-Health-Administration
-
-# 2. Create and activate a virtual environment
-python3 -m venv medical_venv
-source medical_venv/bin/activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-# Make sure you have 'cryptography', 'django-widget-tweaks', etc.
-
-# 4. Database Migration
-python3 manage.py makemigrations
-python3 manage.py migrate
-
-# 5. Create a Superuser (Admin)
-python3 manage.py createsuperuser
-
-# 6. Run the development server
-python3 manage.py runserver
-# Visit http://127.0.0.1:8000/ in your browser
-
-🔐 Password Reset (Development)
-In your settings.py, add the following for testing password reset emails:
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-This will output password reset links directly to the console.
+# 🔐 Password reset configuration
+    * For password reset emails in development, in settings.py, add
+        * EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
