@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>{% block title %}Coruscant Medical System{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CDN (for development use only) -->
+   
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <!-- Navbar -->
+
     <nav class="bg-blue-700 text-white p-4">
         {% if messages %}
         <div class="max-w-4xl mx-auto mt-4">
@@ -59,12 +59,12 @@
 
                     {% else %}
                     <div class="flex items-center space-x-4">
-                        <!-- Login Button -->
+                      
                         <a href="{% url 'login' %}" class="text-sm font-medium text-white-600 hover:underline">
                             Login
                         </a>
                     
-                        <!-- Register Dropdown -->
+                      
                         <div class="relative group">
                             <button
                                 type="button"
@@ -90,7 +90,7 @@
         </div>
     </nav>
 
-    <!-- Page content -->
+   
     <main class="max-w-4xl mx-auto mt-6 p-4 bg-white rounded shadow">
         {% block content %}
         {% endblock %}

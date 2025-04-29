@@ -6,6 +6,10 @@ from .forms import DepartmentRegisterForm, ServiceOrderResultForm, ServiceOrderF
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
+from .utils import encrypt_file
+from django.core.files.base import ContentFile
+from django.http import HttpResponse
+from .utils import decrypt_file
 
 # from .mock_data import (
 #     get_sample_appointments,
@@ -75,10 +79,12 @@ def dashboard_doctor(request):
     appointments = Appointment.objects.filter(doctor=request.user).order_by('-scheduled_time')
     prescriptions = Prescription.objects.filter(doctor=request.user).order_by('-created_at')
     orders = ServiceOrder.objects.filter(doctor=request.user).exclude(result='').order_by('-ordered_at')
+    patients = User.objects.filter(role='PATIENT')
     return render(request, 'dashboard/doctor.html', {
         'appointments': appointments,
         'prescriptions': prescriptions,
         'service_orders': orders,
+        'patients': patients,
     })
 
 @login_required
@@ -303,6 +309,19 @@ def upload_medical_document(request):
             elif request.user.role == 'DOCTOR':
                 patient_id = request.POST.get('patient_id')
                 document.patient = get_object_or_404(User, id=patient_id, role='PATIENT')
+
+            # Encrypt the uploaded file before saving
+            uploaded_file = request.FILES['file']
+            original_data = uploaded_file.read()
+            encrypted_data = encrypt_file(original_data)
+
+            # Overwrite the file with encrypted content
+            document.file.save(
+                uploaded_file.name,
+                ContentFile(encrypted_data),
+                save=False
+            )
+
             document.save()
             return redirect('home_patient' if request.user.role == 'PATIENT' else 'home_doctor')
     else:
@@ -310,9 +329,29 @@ def upload_medical_document(request):
 
     patients = None
     if request.user.role == 'DOCTOR':
-        patients = User.objects.filter(role='PATIENT')  # Simple for now
+        patients = User.objects.filter(role='PATIENT')
 
     return render(request, 'pages/upload_document.html', {'form': form, 'patients': patients})
+
+
+
+@login_required
+def download_document(request, document_id):
+    document = get_object_or_404(MedicalDocument, id=document_id)
+
+    # Permissions check
+    if request.user.role == 'PATIENT' and document.patient != request.user:
+        return HttpResponse('Unauthorized', status=401)
+    if request.user.role == 'DOCTOR' and document.uploaded_by != request.user:
+        return HttpResponse('Unauthorized', status=401)
+
+    # Decrypt the file
+    encrypted_file = document.file.read()
+    decrypted_file = decrypt_file(encrypted_file)
+
+    response = HttpResponse(decrypted_file, content_type='application/octet-stream')
+    response['Content-Disposition'] = f'attachment; filename="{document.file.name.split("/")[-1]}"'
+    return response
 
 
 
@@ -327,4 +366,19 @@ def document_list(request):
         documents = MedicalDocument.objects.all() 
 
     return render(request, 'pages/document_list.html', {'documents': documents})
+
+
+
+@login_required
+def delete_document(request, document_id):
+    document = get_object_or_404(MedicalDocument, id=document_id)
+    
+    if request.user == document.uploaded_by or request.user.is_superuser:
+        document.file.delete()  # delete the file from storage
+        document.delete()       # delete the database record
+        messages.success(request, "Document deleted successfully.")
+    else:
+        messages.error(request, "You don't have permission to delete this document.")
+    
+    return redirect('document_list')
 

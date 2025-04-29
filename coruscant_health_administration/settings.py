@@ -136,3 +136,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Email backend for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+FILE_ENCRYPTION_KEY = '-Ldfq-fJgEiwaH74sUWtTIt6TEs8JdJu1_F98ECI96Q='

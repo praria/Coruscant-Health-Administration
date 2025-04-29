@@ -7,7 +7,7 @@
 <p>Welcome, Dr. {{ user.username }}!</p>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-    <!-- Your Appointments Section -->
+   
     <div class="p-6 bg-yellow-100 rounded-xl shadow-lg">
         <h3 class="font-semibold text-lg mb-4">Your Appointments</h3>
         <ul class="space-y-4">
@@ -23,14 +23,28 @@
         </ul>
     </div>
 
-    <!-- Patient List Section -->
+ 
     <div class="p-6 bg-purple-100 rounded-xl shadow-lg">
         <h3 class="font-semibold text-lg mb-4">Patient List</h3>
-        <p>Manage your patient records.</p>
+    
+        {% if patients %}
+            <ul class="space-y-3">
+                {% for patient in patients %}
+                    <li class="bg-white p-3 rounded shadow flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">{{ patient.get_full_name|default:patient.username }}</p>
+                            <p class="text-sm text-gray-500">{{ patient.email }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No patients found.</p>
+        {% endif %}
     </div>
+    
 </div>
 
-<!-- Service Order Results Section -->
 <div class="p-6 bg-white shadow-lg rounded-xl mt-6">
     <h2 class="text-xl font-semibold mb-4">Service Order Results</h2>
     <ul class="space-y-4">
@@ -45,7 +59,6 @@
     </ul>
 </div>
 
-<!-- Action Buttons Section -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
     <div>
         <a href="{% url 'view_health_readings' %}" class="block bg-blue-600 text-white text-center py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
