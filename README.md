@@ -162,7 +162,7 @@ sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
 sudo systemctl enable gunicorn
 sudo systemctl start gunicorn
-'''
+```
 
 5. Configure Nginx
     * sudo nano /etc/nginx/sites-available/coruscant
@@ -190,8 +190,7 @@ server {
 ```
 _Enable the config and restart Nginx:_
 
-```
-sudo ln -s /etc/nginx/sites-available/coruscant /etc/nginx/sites-enabled
+```sudo ln -s /etc/nginx/sites-available/coruscant /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
 ```
