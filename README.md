@@ -1,5 +1,5 @@
 # 🏨 Coruscant Health Administration
-It is a full-featured, secure, and scalable medical management system built with ** Django and Tailwind CSS**. 
+It is a full-featured, secure, and scalable medical management system built with **Django and Tailwind CSS**. 
 It enables hospitals and clinics to efficiently manage patients, doctors, departments, emergency services (Radiology and Pathology), appointments, health readings, prescriptions, service orders, and encrypted medical documents - all from role-based dashboards.
 Security, document encryption, responsive design, and role-based access control are core pillars of the system
 
@@ -72,6 +72,9 @@ Security, document encryption, responsive design, and role-based access control 
     * Django's built-in authentication system
     * Widget Tweaks for form customization
     * Email backend (for password reset functionality)
+6. Deployment on AWS EC2
+    * GUNICORN
+    * NGINX 
 
 
 # 📦 Setup Instructions
@@ -102,3 +105,100 @@ Security, document encryption, responsive design, and role-based access control 
 # 🔐 Password reset configuration
     * For password reset emails in development, in settings.py, add
         * EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# 🚀 Deployment on AWS EC2 with Gunicorn and Nginx
+    * Prerequisites    
+        * An AWS EC2 instance (Ubuntu 22.04 LTS recommended)
+        * Port 80 and 22 open in the EC2 Security Group
+        * SSH access to the instance
+        * Django project uploaded to the EC2 instance
+
+1. SSH into the EC2 instance
+    * ssh -i your-key.pem ubuntu@your-ec2-public-ip
+
+2. Install required packages
+    * sudo apt update
+    * sudo apt install python3-pip python3-venv nginx git
+
+3. Set up the Django app
+    * cd ~
+    * git clone https://github.com/praria/Coruscant-Health-Administration.git
+    * cd Coruscant-Health-Administration
+    * python3 -m venv venv
+    * source venv/bin/activate
+    * pip install -r requirements.txt
+    * Update the following in settings.py:
+        ** ALLOWED_HOSTS = ['your-ec2-public-ip']
+        ** STATIC_ROOT = BASE_DIR / 'staticfiles'
+    * python manage.py collectstatic
+    * python manage.py migrate
+
+4. Install Gunicorn and Create Gunicorn systemd service
+    * npm install gunicorn
+    * sudo nano /etc/systemd/system/gunicorn.service
+
+```
+[Unit]
+Description=gunicorn daemon for Coruscant Health Administration
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/Coruscant-Health-Administration
+ExecStart=/home/ubuntu/Coruscant-Health-Administration/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/home/ubuntu/Coruscant-Health-Administration/gunicorn.sock \
+          coruscant_health_administration.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+```
+_Enable and start Gunicorn:_
+
+```
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable gunicorn
+sudo systemctl start gunicorn
+'''
+
+5. Configure Nginx
+    * sudo nano /etc/nginx/sites-available/coruscant
+
+```
+server {
+    listen 80;
+    server_name 52.205.249.17;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        alias /home/ubuntu/Coruscant-Health-Administration/staticfiles/;
+    }
+
+    location /media/ {
+        alias /home/ubuntu/Coruscant-Health-Administration/media/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/Coruscant-Health-Administration/gunicorn.sock;
+    }
+}
+```
+_Enable the config and restart Nginx:_
+
+```
+sudo ln -s /etc/nginx/sites-available/coruscant /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+6. Final Steps
+    * Visit: http://your-ec2-public-ip/
+
+
+
+
